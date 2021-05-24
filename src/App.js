@@ -1,6 +1,7 @@
 import marked from "marked";
 import { useState, useEffect } from "react";
 import raw from "./markdown.txt";
+import "./App.css";
 
 marked.setOptions({
   gfm: true,
@@ -10,7 +11,6 @@ marked.setOptions({
 function App() {
   const [markdown, setMarkdown] = useState("");
   const [preview, setPreview] = useState("");
-  // const [placeholder, setPlaceholder] = useState("");
 
   useEffect(() => {
     if (markdown !== "") return;
@@ -24,20 +24,25 @@ function App() {
   }, [markdown, preview]);
 
   const handleChange = (e) => {
-    setMarkdown(e.target.value);
-    const result = marked(e.target.value);
+    const val = e.target.value !== "" ? e.target.value : " ";
+    setMarkdown(val);
+    const result = marked(val);
     setPreview(result);
   };
 
   return (
     <>
       <textarea
+        className="w-3/4 m-10 h-72 max-w-screen-md border-black border p-2 font-mono"
         id="editor"
         onChange={handleChange}
         value={markdown}
-        // placeholder={placeholder}
       />
-      <div id="preview" dangerouslySetInnerHTML={{ __html: preview }} />
+      <div
+        id="preview"
+        dangerouslySetInnerHTML={{ __html: preview }}
+        className="bg-gray-100 mx-10 p-6"
+      />
     </>
   );
 }
