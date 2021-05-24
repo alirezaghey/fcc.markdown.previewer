@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import marked from "marked";
+import { useState, useEffect } from "react";
+import raw from "./markdown.txt";
+
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+});
 
 function App() {
+  const [markdown, setMarkdown] = useState("");
+  const [preview, setPreview] = useState("");
+  // const [placeholder, setPlaceholder] = useState("");
+
+  useEffect(() => {
+    if (markdown !== "") return;
+    fetch(raw)
+      .then((res) => res.text())
+      .then((text) => {
+        setMarkdown(text);
+        const result = marked(text);
+        setPreview(result);
+      });
+  }, [markdown, preview]);
+
+  const handleChange = (e) => {
+    setMarkdown(e.target.value);
+    const result = marked(e.target.value);
+    setPreview(result);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <textarea
+        id="editor"
+        onChange={handleChange}
+        value={markdown}
+        // placeholder={placeholder}
+      />
+      <div id="preview" dangerouslySetInnerHTML={{ __html: preview }} />
+    </>
   );
 }
 
